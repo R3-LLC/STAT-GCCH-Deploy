@@ -1,0 +1,426 @@
+{
+    "type": "object",
+    "properties": {
+        "Accounts": {
+            "type": "array",
+            "description": "Array of User Accounts",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "userPrincipalName": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "id": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "onPremisesSecurityIdentifier": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "onPremisesDistinguishedName": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "onPremisesDomainName": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "onPremisesSamAccountName": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "onPremisesSyncEnabled": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "accountEnabled": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "mail": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "city": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "state": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "country": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "department": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "jobTitle": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "officeLocation": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "isAADPrivileged": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "isMfaRegistered": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "isSSPREnabled": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "isSSPRRegistered": {
+                        "description": "Array property in Accounts array"
+                    },
+                    "manager": {
+                        "type": "object",
+                        "description": "Array property in Accounts array",
+                        "properties": {
+                            "@@odata.type": {
+                                "description": "Array property in Accounts array manager object"
+                            },
+                            "userPrincipalName": {
+                                "description": "Array property in Accounts array manager object"
+                            },
+                            "mail": {
+                                "description": "Array property in Accounts array manager object"
+                            },
+                            "id": {
+                                "description": "Array property in Accounts array manager object"
+                            }
+                        }
+                    },
+                    "RawEntity": {
+                        "type": "object",
+                        "description": "Object containing Raw unenriched entity data in Accounts array",
+                        "properties": {
+                            "accountName": {
+                                "description": "accountName from RawEntity object in Accounts array"
+                            },
+                            "upnSuffix": {
+                                "description": "upnSuffix from RawEntity object in Accounts array"
+                            },
+                            "isDomainJoined": {
+                                "description": "isDomainJoined from RawEntity object in Accounts array"
+                            },
+                            "displayName": {
+                                "description": "dislayName from RawEntity object in Accounts array"
+                            },
+                            "friendlyName": {
+                                "description": "friendlyName from RawEntity object in Accounts array"
+                            },
+                            "sid": {
+                                "description": "sid from RawEntity object in Accounts array"
+                            }
+                        }
+                    },
+                    "AssignedRoles": {
+                        "type": "array",
+                        "description": "Array of assigned roles in Accounts array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "Role": {
+                                    "description": "Array property in AssignedRoles array"
+                                }
+                            },
+                            "required": []
+                        }
+                    }
+                },
+                "required": []
+            }
+        },
+        "AccountsCount": {
+            "type": "integer",
+            "description": "Count of accounts processed by module"
+        },
+        "Domains": {
+            "type": "array",
+            "description": "Array of Domains",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "RawEntity": {
+                        "type": "object",
+                        "description": "Object containing Raw unenriched entity data in Domains array",
+                        "properties": {
+                            "domainName": {
+                                "description": "domainName from RawEntity object in Domains array"
+                            },
+                            "friendlyName": {
+                                "description": "friendlyName from RawEntity object in Domains array"
+                            }
+                        }
+                    }
+                },
+                "required": []
+            }
+        },
+        "DomainsCount": {
+            "description": "Count of Domains processed by module",
+            "type": "integer"
+        },
+        "EntitiesCount": {
+            "type": "integer",
+            "description": "Count of all entities processed by enrichment module"
+        },
+        "Hosts": {
+            "type": "array",
+            "description": "Array of Hosts",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "DnsDomain": {
+                        "description": "Array property in Hosts array"
+                    },
+                    "FQDN": {
+                        "description": "Array property in Hosts array"
+                    },
+                    "Hostname": {
+                        "description": "Array property in Hosts array"
+                    },
+                    "RawEntity": {
+                        "type": "object",
+                        "description": "Object containing Raw unenriched entity data in Hosts array",
+                        "properties": {
+                            "dnsDomain": {
+                                "description": "dnsDomain from RawEntity object in Hosts array"
+                            },
+                            "hostName": {
+                                "description": "hostName from RawEntity object in Hosts array"
+                            },
+                            "netBiosName": {
+                                "description": "netBiosName from RawEntity object in Hosts array"
+                            },
+                            "friendlyName": {
+                                "description": "friendlyName from RawEntity object in Hosts array"
+                            }
+                        }
+                    }
+                },
+                "required": []
+            }
+        },
+        "FileHashes": {
+            "type": "array",
+            "description": "Array of FileHashes",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "RawEntity": {
+                        "type": "object",
+                        "description": "Object containing Raw unenriched entity data in FileHashes array",
+                        "properties": {
+                            "hashValue": {
+                                "description": "hashValue from RawEntity object in FileHashes array"
+                            },
+                            "algorithm": {
+                                "description": "algorithm from RawEntity object in FileHashes array"
+                            },
+                            "friendlyName": {
+                                "description": "friendlyName from RawEntity object in FileHashes array"
+                            }
+                        }
+                    }
+                },
+                "required": []
+            }
+        },
+        "FileHashesCount": {
+            "description": "Count of File Hashes processed by module",
+            "type": "integer"
+        },
+        "Files": {
+            "type": "array",
+            "description": "Array of Files",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "RawEntity": {
+                        "type": "object",
+                        "description": "Object containing Raw unenriched entity data in Files array",
+                        "properties": {
+                            "directory": {
+                                "description": "directory from RawEntity object in Files array"
+                            },
+                            "fileName": {
+                                "description": "fileName from RawEntity object in Files array"
+                            },
+                            "friendlyName": {
+                                "description": "friendlyName from RawEntity object in Files array"
+                            }
+                        }
+                    }
+                },
+                "required": []
+            }
+        },
+        "FilesCount": {
+            "description": "Count of Files processed by module",
+            "type": "integer"
+        },
+        "HostsCount": {
+            "description": "Count of Hosts processed by module",
+            "type": "integer"
+        },
+        "IPs": {
+            "type": "array",
+            "description": "Array of IP Addresses",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "Address": {
+                        "description": "Array property in IPs array"
+                    },
+                    "RawEntity": {
+                        "type": "object",
+                        "description": "Object containing Raw unenriched entity data in IPs array",
+                        "properties": {
+                            "address": {
+                                "description": "address from RawEntity object in IPs array"
+                            },
+                            "friendlyName": {
+                                "description": "friendlyName from RawEntity object in IPs array"
+                            }
+                        }
+                    },
+                    "GeoData": {
+                        "type": "object",
+                        "description": "Array object in IPs array",
+                        "properties": {
+                            "asn": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "carrier": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "city": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "cityCf": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "continent": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "country": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "countryCf": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "ipAddr": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "ipRoutingType": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "latitude": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "longitude": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "organization": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "organizationType": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "region": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "state": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "stateCf": {
+                                "description": "Array property in IPs array GeoData object"
+                            },
+                            "stateCode": {
+                                "description": "Array property in IPs array GeoData object"
+                            }
+                        }
+                    }
+                },
+                "required": []
+            }
+        },
+        "IPsCount": {
+            "description": "Count of IPs processed by module",
+            "type": "integer"
+        },
+        "IncidentARMId": {
+            "description": "The ARM Id of the Azure Sentinel Incident",
+            "type": "string"
+        },
+        "ModuleVersions": {
+            "type": "object",
+            "properties": {
+                "AADRisksModule": {
+                    "type": "string"
+                },
+                "BaseModule": {
+                    "type": "string"
+                },
+                "FileModule": {
+                    "type": "string"
+                },
+                "KQLModule": {
+                    "type": "string"
+                },
+                "MCASModule": {
+                    "type": "string"
+                },
+                "MDEModule": {
+                    "type": "string"
+                },
+                "OOFModule": {
+                    "type": "string"
+                },
+                "RelatedAlerts": {
+                    "type": "string"
+                },
+                "TIModule": {
+                    "type": "string"
+                },
+                "UEBAModule": {
+                    "type": "string"
+                },
+                "WatchlistModule": {
+                    "type": "string"
+                }
+            }
+        },
+        "TenantDisplayName": {
+            "type":"string",
+            "description": "Azure AD Tenant Display Name"
+        },
+        "TenantId": {
+            "type":"string",
+            "description": "Azure AD Tenant Id"
+        },     
+        "URLs": {
+            "type": "array",
+            "description": "Array of URLs",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "RawEntity": {
+                        "type": "object",
+                        "description": "Object containing Raw unenriched entity data in URLs array",
+                        "properties": {
+                            "url": {
+                                "description": "url from RawEntity object in URLs array"
+                            },
+                            "friendlyName": {
+                                "description": "friendlyName from RawEntity object in URLs array"
+                            }
+                        }
+                    }
+                },
+                "required": []
+            }
+        },
+        "URLsCount": {
+            "description": "Count of URLs processed by module",
+            "type": "integer"
+        },
+        "WorkspaceId": {
+            "description": "The Log Analytics Workspace Id of the Azure Sentinel Incident",
+            "type": "string"
+        }
+    }
+}

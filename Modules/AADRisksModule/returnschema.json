@@ -1,0 +1,48 @@
+{
+    "type": "object",
+    "properties": {
+        "AnalyzedEntities": {
+            "type": "integer",
+            "description": "Number of entities analyzed"
+        },
+        "DetailedResults": {
+            "type": "array",
+            "description": "An array of details per user",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "UserFailedMFACount": {
+                        "type": "integer"
+                    },
+                    "UserId": {
+                        "type": "string"
+                    },
+                    "UserMFAFraudsCount": {
+                        "type": "integer"
+                    },
+                    "UserPrincipalName": {
+                        "type": "string"
+                    },
+                    "UserRiskLevel": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "FailedMFATotalCount": {
+            "type": "integer",
+            "description": "Total of failed MFA found in TI for all entities"
+        },
+        "HighestRiskLevel": {
+            "type": "string",
+            "description": "Highest risk level found for all the entities"
+        },
+        "MFAFraudTotalCount": {
+            "type": "integer",
+            "description": "Total of MFA fraud reported for all entities"
+        },
+        "ModuleName": {
+            "type": "string"
+        }
+    }
+}

@@ -1,0 +1,405 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+        "comments": "STAT main deployment template, GCC High variant. Changes vs commercial: storage kind set to StorageV2, all default API endpoint parameters set to US Government values, AzureAuthorityHost parameter added and passed to the nested Function templates so azure-identity in the Function App authenticates against the US Government Entra tenant."
+    },
+    "parameters": {
+        "NamingType": {
+            "type": "string",
+            "defaultValue": "default",
+            "metadata": {
+                "description": "Use Default naming or a custom name"
+            }
+        },
+        "STATFunctionName": {
+            "type": "string"
+        },
+        "STATStorageName": {
+            "type": "string"
+        },
+        "STATConnectorName": {
+            "type": "string"
+        },
+        "STATConnectorDisplayName": {
+            "type": "string"
+        },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_RAGRS"
+            ],
+            "metadata": {
+                "description": "Storage Account type"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources. Expected to be a US Government region such as usgovvirginia, usgovtexas, usgovarizona."
+            }
+        },
+        "FunctionPackage": {
+            "defaultValue": "",
+            "type": "string",
+            "metadata": {
+                "description": "URL of the STAT Function package zip. The Function App must be able to reach this URL. If outbound to github.com is restricted in your GCC High environment, stage the zip in a GCC High storage account first and pass that URL here."
+            }
+        },
+        "MSGraphEndpoint": {
+            "type": "string",
+            "defaultValue": "graph.microsoft.us",
+            "metadata": {
+                "description": "Microsoft Graph API endpoint. GCC High default: graph.microsoft.us. DoD: dod-graph.microsoft.us."
+            }
+        },
+        "M365DEndpoint": {
+            "type": "string",
+            "defaultValue": "api-gov.security.microsoft.us",
+            "metadata": {
+                "description": "Microsoft 365 Defender API endpoint. GCC High default: api-gov.security.microsoft.us."
+            }
+        },
+        "MDEEndpoint": {
+            "type": "string",
+            "defaultValue": "api-gov.securitycenter.microsoft.us",
+            "metadata": {
+                "description": "Microsoft Defender for Endpoint API endpoint. GCC High default: api-gov.securitycenter.microsoft.us. GCC: api-gcc.securitycenter.microsoft.us. DoD: api-gov.securitycenter.microsoft.us (same host as GCC High)."
+            }
+        },
+        "LogAnalyticsEndpoint": {
+            "type": "string",
+            "defaultValue": "api.loganalytics.us",
+            "metadata": {
+                "description": "Azure Log Analytics API endpoint. GCC High default: api.loganalytics.us."
+            }
+        },
+        "AzureResourceManagerEndpoint": {
+            "type": "string",
+            "defaultValue": "management.usgovcloudapi.net",
+            "metadata": {
+                "description": "Azure Resource Manager API endpoint. GCC High default: management.usgovcloudapi.net."
+            }
+        },
+        "AzureAuthorityHost": {
+            "type": "string",
+            "defaultValue": "login.microsoftonline.us",
+            "metadata": {
+                "description": "Entra ID authority host used by azure-identity in the Function App. GCC High default: login.microsoftonline.us. Added for the GCC High variant; passed through as the AZURE_AUTHORITY_HOST app setting."
+            }
+        },
+        "ServicePrincipalClientId": {
+            "type": "string",
+            "metadata": {
+                "description": "Client ID of the STAT Service Principal (service principal or user-assigned identity modes only)."
+            }
+        },
+        "ServicePrincipalSecret": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Secret of the STAT Service Principal (service principal mode only)."
+            }
+        },
+        "identityType": {
+            "type": "string",
+            "metadata": {
+                "description": "Identity to deploy with: sp, system, or user."
+            }
+        },
+        "UserIdentityResourceId": {
+            "type": "string"
+        },
+        "DeploymentBranch": {
+            "type": "string"
+        },
+        "DeployBasicSample": {
+            "type": "bool"
+        },
+        "BasicSamplePlaybookName": {
+            "type": "string"
+        },
+        "SecurityPortal": {
+            "type": "string",
+            "defaultValue": "security.microsoft.us",
+            "metadata": {
+                "description": "Hostname for Microsoft Defender XDR portal links displayed in Sentinel incident comments. GCC High default: security.microsoft.us."
+            }
+        },
+        "AzurePortal": {
+            "type": "string",
+            "defaultValue": "portal.azure.us",
+            "metadata": {
+                "description": "Hostname for Azure portal links displayed in Sentinel incident comments. GCC High default: portal.azure.us."
+            }
+        }
+    },
+    "variables": {
+        "functionName": "[if(equals(parameters('NamingType'), 'custom'), parameters('STATFunctionName'), format('stat-{0}', uniqueString(resourceGroup().id)))]",
+        "storageAccountName": "[if(equals(parameters('NamingType'), 'custom'), parameters('STATStorageName'), format('stat{0}', uniqueString(resourceGroup().id)))]",
+        "SPFunctionTemplate": "[concat('https://github.com/R3-LLC/STAT-GCCH-Deploy/raw/', parameters('DeploymentBranch'), '/Function/ServicePrincipalIdentity.json')]",
+        "UserIdFunctionTemplate": "[concat('https://github.com/R3-LLC/STAT-GCCH-Deploy/raw/', parameters('DeploymentBranch'), '/Function/UserAssignedIdentity.json')]",
+        "SystemIdFunctionTemplate": "[concat('https://github.com/R3-LLC/STAT-GCCH-Deploy/raw/', parameters('DeploymentBranch'), '/Function/SystemIdentity.json')]",
+        "ConnectorTemplate": "[concat('https://github.com/R3-LLC/STAT-GCCH-Deploy/raw/', parameters('DeploymentBranch'), '/Connector/connector.json')]",
+        "BasicSampleTemplate": "[concat('https://github.com/R3-LLC/STAT-GCCH-Deploy/raw/', parameters('DeploymentBranch'), '/Samples/basicsample.json')]",
+        "AADTenantId": "[subscription().tenantId]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2022-05-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('storageAccountType')]"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "allowBlobPublicAccess": false,
+                "minimumTlsVersion": "TLS1_2",
+                "supportsHttpsTrafficOnly": true
+            }
+        },
+        {
+            "condition": "[equals(parameters('identityType'), 'sp')]",
+            "apiVersion": "2019-10-01",
+            "name": "STATFunctionSP",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[variables('SPFunctionTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "STATFunctionName": {
+                        "value": "[variables('functionName')]"
+                    },
+                    "STATStorageName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "FunctionPackage": {
+                        "value": "[parameters('FunctionPackage')]"
+                    },
+                    "MSGraphEndpoint": {
+                        "value": "[parameters('MSGraphEndpoint')]"
+                    },
+                    "M365DEndpoint": {
+                        "value": "[parameters('M365DEndpoint')]"
+                    },
+                    "MDEEndpoint": {
+                        "value": "[parameters('MDEEndpoint')]"
+                    },
+                    "LogAnalyticsEndpoint": {
+                        "value": "[parameters('LogAnalyticsEndpoint')]"
+                    },
+                    "AzureResourceManagerEndpoint": {
+                        "value": "[parameters('AzureResourceManagerEndpoint')]"
+                    },
+                    "AzureAuthorityHost": {
+                        "value": "[parameters('AzureAuthorityHost')]"
+                    },
+                    "ServicePrincipalClientId": {
+                        "value": "[parameters('ServicePrincipalClientId')]"
+                    },
+                    "ServicePrincipalSecret": {
+                        "value": "[parameters('ServicePrincipalSecret')]"
+                    },
+                    "AADTenantId": {
+                        "value": "[variables('AADTenantId')]"
+                    },
+                    "STATConnectorName": {
+                        "value": "[parameters('STATConnectorName')]"
+                    },
+                    "STATConnectorDisplayName": {
+                        "value": "[parameters('STATConnectorDisplayName')]"
+                    },
+                    "ConnectorTemplate": {
+                        "value": "[variables('ConnectorTemplate')]"
+                    },
+                    "BasicSampleTemplate": {
+                        "value": "[variables('BasicSampleTemplate')]"
+                    },
+                    "DeployBasicSample": {
+                        "value": "[parameters('DeployBasicSample')]"
+                    },
+                    "BasicSamplePlaybookName": {
+                        "value": "[parameters('BasicSamplePlaybookName')]"
+                    },
+                    "SecurityPortal": {
+                        "value": "[parameters('SecurityPortal')]"
+                    },
+                    "AzurePortal": {
+                        "value": "[parameters('AzurePortal')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('identityType'), 'system')]",
+            "apiVersion": "2019-10-01",
+            "name": "STATFunctionSystemId",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[variables('SystemIdFunctionTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "STATFunctionName": {
+                        "value": "[variables('functionName')]"
+                    },
+                    "STATStorageName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "FunctionPackage": {
+                        "value": "[parameters('FunctionPackage')]"
+                    },
+                    "MSGraphEndpoint": {
+                        "value": "[parameters('MSGraphEndpoint')]"
+                    },
+                    "M365DEndpoint": {
+                        "value": "[parameters('M365DEndpoint')]"
+                    },
+                    "MDEEndpoint": {
+                        "value": "[parameters('MDEEndpoint')]"
+                    },
+                    "LogAnalyticsEndpoint": {
+                        "value": "[parameters('LogAnalyticsEndpoint')]"
+                    },
+                    "AzureResourceManagerEndpoint": {
+                        "value": "[parameters('AzureResourceManagerEndpoint')]"
+                    },
+                    "AzureAuthorityHost": {
+                        "value": "[parameters('AzureAuthorityHost')]"
+                    },
+                    "AADTenantId": {
+                        "value": "[variables('AADTenantId')]"
+                    },
+                    "STATConnectorName": {
+                        "value": "[parameters('STATConnectorName')]"
+                    },
+                    "STATConnectorDisplayName": {
+                        "value": "[parameters('STATConnectorDisplayName')]"
+                    },
+                    "ConnectorTemplate": {
+                        "value": "[variables('ConnectorTemplate')]"
+                    },
+                    "BasicSampleTemplate": {
+                        "value": "[variables('BasicSampleTemplate')]"
+                    },
+                    "DeployBasicSample": {
+                        "value": "[parameters('DeployBasicSample')]"
+                    },
+                    "BasicSamplePlaybookName": {
+                        "value": "[parameters('BasicSamplePlaybookName')]"
+                    },
+                    "SecurityPortal": {
+                        "value": "[parameters('SecurityPortal')]"
+                    },
+                    "AzurePortal": {
+                        "value": "[parameters('AzurePortal')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('identityType'), 'user')]",
+            "apiVersion": "2019-10-01",
+            "name": "STATFunctionUser",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[variables('UserIdFunctionTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "STATFunctionName": {
+                        "value": "[variables('functionName')]"
+                    },
+                    "STATStorageName": {
+                        "value": "[variables('storageAccountName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "FunctionPackage": {
+                        "value": "[parameters('FunctionPackage')]"
+                    },
+                    "MSGraphEndpoint": {
+                        "value": "[parameters('MSGraphEndpoint')]"
+                    },
+                    "M365DEndpoint": {
+                        "value": "[parameters('M365DEndpoint')]"
+                    },
+                    "MDEEndpoint": {
+                        "value": "[parameters('MDEEndpoint')]"
+                    },
+                    "LogAnalyticsEndpoint": {
+                        "value": "[parameters('LogAnalyticsEndpoint')]"
+                    },
+                    "AzureResourceManagerEndpoint": {
+                        "value": "[parameters('AzureResourceManagerEndpoint')]"
+                    },
+                    "AzureAuthorityHost": {
+                        "value": "[parameters('AzureAuthorityHost')]"
+                    },
+                    "ServicePrincipalClientId": {
+                        "value": "[parameters('ServicePrincipalClientId')]"
+                    },
+                    "AADTenantId": {
+                        "value": "[variables('AADTenantId')]"
+                    },
+                    "UserIdentityResourceId": {
+                        "value": "[parameters('UserIdentityResourceId')]"
+                    },
+                    "STATConnectorName": {
+                        "value": "[parameters('STATConnectorName')]"
+                    },
+                    "STATConnectorDisplayName": {
+                        "value": "[parameters('STATConnectorDisplayName')]"
+                    },
+                    "ConnectorTemplate": {
+                        "value": "[variables('ConnectorTemplate')]"
+                    },
+                    "BasicSampleTemplate": {
+                        "value": "[variables('BasicSampleTemplate')]"
+                    },
+                    "DeployBasicSample": {
+                        "value": "[parameters('DeployBasicSample')]"
+                    },
+                    "BasicSamplePlaybookName": {
+                        "value": "[parameters('BasicSamplePlaybookName')]"
+                    },
+                    "SecurityPortal": {
+                        "value": "[parameters('SecurityPortal')]"
+                    },
+                    "AzurePortal": {
+                        "value": "[parameters('AzurePortal')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

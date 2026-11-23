@@ -1,0 +1,82 @@
+{
+    "type": "object",
+    "properties": {
+        "AllTactics": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "AllTacticsCount": {
+            "type": "integer"
+        },
+        "DetailedResults": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "StartTime": {
+                        "type": "string"
+                    },
+                    "DisplayName": {
+                        "type": "string"
+                    },
+                    "AlertName": {
+                        "type": "string"
+                    },
+                    "AlertSeverity": {
+                        "type": "string"
+                    },
+                    "SystemAlertId": {
+                        "type": "string"
+                    },
+                    "ProviderName": {
+                        "type": "string"
+                    },
+                    "Tactics": {
+                        "type": "string"
+                    },
+                    "AccountEntityMatch": {
+                        "type": "boolean"
+                    },
+                    "IPEntityMatch": {
+                        "type": "boolean"
+                    },
+                    "HostEntityMatch": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "HighestSeverityAlert": {
+            "type": "string"
+        },
+        "ModuleName": {
+            "type": "string"
+        },
+        "RelatedAlertsCount": {
+            "type": "integer"
+        },
+        "RelatedAlertsFound": {
+            "type": "boolean"
+        },
+        "RelatedHostAlertsCount": {
+            "type": "integer"
+        },
+        "RelatedHostAlertsFound": {
+            "type": "boolean"
+        },
+        "RelatedIPAlertsCount": {
+            "type": "integer"
+        },
+        "RelatedIPAlertsFound": {
+            "type": "boolean"
+        },
+        "RelatedAccountAlertsCount": {
+            "type": "integer"
+        },
+        "RelatedAccountAlertsFound": {
+            "type": "boolean"
+        }
+    }
+}

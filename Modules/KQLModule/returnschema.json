@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "properties": {
+        "DetailedResults": {
+            "type": "array"
+        },
+        "LogicAppRunId": {
+            "type": "string"
+        },
+        "ModuleName": {
+            "type": "string"
+        },
+        "RelultsCount": {
+            "type": "integer"
+        },
+        "ResultsFound": {
+            "type": "boolean"
+        }
+    }
+}

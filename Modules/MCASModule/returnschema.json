@@ -1,0 +1,42 @@
+﻿{
+    "type": "object",
+    "properties": {
+        "AboveThreholdCount": {
+            "type": "integer",
+            "description": "Number of accounts foud above the specified threshold"
+        },
+        "AnalyzedEntities": {
+            "type": "integer",
+            "description": "Number of entities analyzed"
+        },
+        "DetailedResults": {
+            "type": "array",
+            "description": "An array of users with their score" ,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "ThreatScore": {
+                        "type": "integer"
+                    },
+                    "UserId": {
+                        "type": "string"
+                    },
+                    "UserPrincipalName": {
+                        "type": "string"
+                    },
+                    "ThreatScoreHistory": {
+                        "type": "array"
+                    }
+                }
+            }
+        },
+        "MaximumScore": {
+            "type": "integer",
+            "description": "Maximum score found for all entities"
+        },
+        "ModuleName": {
+            "type": "string",
+            "description": "Name of the STAT module"
+        }
+    }
+}
