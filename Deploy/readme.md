@@ -16,7 +16,7 @@ To upgrade the Microsoft Sentinel Triage AssistanT you can simply deploy the sol
 
 ## Quick Deployment
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://aka.ms/mstatdeploy)
+https://aka.ms/deploytoazurebutton](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FR3-LLC%2FSTAT-GCCH-Deploy%2Fmain%2FDeploy%2Fstatdeploy.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FR3-LLC%2FSTAT-GCCH-Deploy%2Fmain%2FDeploy%2Fdeployui.json)
 
 ## Post Deployment
 
